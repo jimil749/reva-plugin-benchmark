@@ -11,7 +11,7 @@ The following packages have been (ongoing) benchmarked:
 
 # Benchmarks
 
-For the purpose of benchmarking, this project uses the existing [reva plugin driver](https://github.com/cs3org/reva/tree/master/pkg/user/manager/json). Details about each plugin package and the corresponding benchmarks can be found in the respective directories.
+For the purpose of benchmarking, this project uses the existing [reva plugin driver](https://github.com/cs3org/reva/tree/master/pkg/user/manager/json). Details about each plugin package and the corresponding benchmarks can be found in the respective directories, which can be accessed from the directory structure below.
 
 # File Directory Structure
 - __reva\-plugin\-benchmark__
