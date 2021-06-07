@@ -20,7 +20,7 @@ var PluginMap = map[string]plugin.Plugin{
 	"json": &JSONPlugin{},
 }
 
-// KV is the interface that we're exposing as a plugin.
+// Manager is the interface that we're exposing as a plugin.
 type Manager interface {
 	OnLoad(userFile string) error
 	GetUser(*userpb.UserId) (*userpb.User, error)

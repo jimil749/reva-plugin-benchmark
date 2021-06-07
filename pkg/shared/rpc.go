@@ -1,19 +1,20 @@
 package shared
 
 import (
-	"fmt"
 	"net/rpc"
 
 	userpb "github.com/cs3org/go-cs3apis/cs3/identity/user/v1beta1"
 )
 
-// RPCClient is an implementation of KV that talks over RPC.
+// RPCClient is an implementation of Manager that talks over RPC.
 type RPCClient struct{ client *rpc.Client }
 
+// OnLoadArg for RPC
 type OnLoadArg struct {
 	UserFile string
 }
 
+// OnLoadReply for RPC
 type OnLoadReply struct {
 	Err error
 }
@@ -55,7 +56,6 @@ type RPCServer struct {
 }
 
 func (m *RPCServer) OnLoad(args OnLoadArg, resp *OnLoadReply) error {
-	fmt.Println("onload")
 	resp.Err = m.Impl.OnLoad(args.UserFile)
 	return nil
 }

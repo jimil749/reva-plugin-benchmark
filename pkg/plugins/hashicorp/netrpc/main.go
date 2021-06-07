@@ -9,8 +9,7 @@ import (
 	"github.com/jimil749/reva-plugin-benchmark/pkg/shared"
 )
 
-// Here is a real implementation of KV that writes to a local file with
-// the key name and the contents are the value of the key.
+// Here is a real implementation of Manager
 type Manager struct {
 	users []*userpb.User
 }

@@ -41,11 +41,11 @@ func main() {
 		os.Exit(1)
 	}
 
-	// We should have a KV store now! This feels like a normal interface
+	// We should have the Manager now! This feels like a normal interface
 	// implementation but is in fact over an RPC connection.
 	manager := raw.(shared.Manager)
 
-	err = manager.OnLoad("/home/jimil/Desktop/reva-plugin-benchmark/file/user.demo.json")
+	err = manager.OnLoad("./file/user.demo.json")
 	if err != nil {
 		fmt.Println(err)
 	}
