@@ -17,6 +17,7 @@ To use the plugin system, following steps should be followed (These are high lev
 1. Plugins use RPC/gRPC to communicate with the host process, hence plugins can't crash the host process. A panic in a plugin doesn't panic the plugin user.
 2. Plugins are a Go interface implementation: hence writing and consuming plugins feel very "natural"!
 3. Used in production by many hashicorp projects: Vault, Terraform etc
+
 More features [here](https://github.com/hashicorp/go-plugin#features)
 
 # Cons
