@@ -27,6 +27,7 @@ For the purpose of benchmarking, this project uses the existing [reva plugin dri
      - __plugins__
        - __hashicorp__
          - __netrpc__
+           - [README.md](pkg/plugins/hashicorp/netrpc/README.md)
            - [main.go](pkg/plugins/hashicorp/netrpc/main.go)
      - __shared__
        - [interface.go](pkg/shared/interface.go)
