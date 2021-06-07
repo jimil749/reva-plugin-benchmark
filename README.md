@@ -32,3 +32,19 @@ For the purpose of benchmarking, this project uses the existing [reva plugin dri
        - [interface.go](pkg/shared/interface.go)
        - [rpc.go](pkg/shared/rpc.go)
    - [run.sh](run.sh)
+
+# Running locally
+
+In order to run the benchmarks locally, follow:
+
+1. Clone this repository
+```
+git clone https://github.com/jimil749/reva-plugin-benchmark.git
+cd reva-plugin=benchmark
+```
+2. Run `run.sh`
+```
+./run.sh
+```
+
+That's it!
