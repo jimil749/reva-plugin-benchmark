@@ -48,6 +48,64 @@ func (m *RPCClient) GetUser(uid *userpb.UserId) (*userpb.User, error) {
 	return resp.User, resp.Err
 }
 
+type GetUserByClaimArg struct {
+	Claim string
+	Value string
+}
+
+type GetUserByClaimReply struct {
+	User *userpb.User
+	Err  error
+}
+
+func (m *RPCClient) GetUserByClaim(claim, value string) (*userpb.User, error) {
+	args := GetUserByClaimArg{Claim: claim, Value: value}
+	resp := GetUserByClaimReply{}
+	err := m.client.Call("Plugin.GetUserByClaim", args, &resp)
+	if err != nil {
+		return nil, err
+	}
+	return resp.User, resp.Err
+}
+
+type GetUserGroupsArg struct {
+	User *userpb.UserId
+}
+
+type GetUserGroupsReply struct {
+	Group []string
+	Err   error
+}
+
+func (m *RPCClient) GetUserGroups(user *userpb.UserId) ([]string, error) {
+	args := GetUserGroupsArg{User: user}
+	resp := GetUserGroupsReply{}
+	err := m.client.Call("Plugin.GetUserGroups", args, &resp)
+	if err != nil {
+		return nil, err
+	}
+	return resp.Group, resp.Err
+}
+
+type FindUsersArg struct {
+	query string
+}
+
+type FindUsersReply struct {
+	User []*userpb.User
+	Err  error
+}
+
+func (m *RPCClient) FindUsers(query string) ([]*userpb.User, error) {
+	args := FindUsersArg{query: query}
+	resp := FindUsersReply{}
+	err := m.client.Call("Plugin.FindUsers", args, &resp)
+	if err != nil {
+		return nil, err
+	}
+	return resp.User, resp.Err
+}
+
 // Here is the RPC server that RPCClient talks to, conforming to
 // the requirements of net/rpc
 type RPCServer struct {
@@ -62,5 +120,20 @@ func (m *RPCServer) OnLoad(args OnLoadArg, resp *OnLoadReply) error {
 
 func (m *RPCServer) GetUser(args GetUserArg, resp *GetUserReply) error {
 	resp.User, resp.Err = m.Impl.GetUser(args.Uid)
+	return nil
+}
+
+func (m *RPCServer) GetUserByClaim(args GetUserByClaimArg, resp *GetUserByClaimReply) error {
+	resp.User, resp.Err = m.Impl.GetUserByClaim(args.Claim, args.Value)
+	return nil
+}
+
+func (m *RPCServer) GetUserGroups(args GetUserGroupsArg, resp *GetUserGroupsReply) error {
+	resp.Group, resp.Err = m.Impl.GetUserGroups(args.User)
+	return nil
+}
+
+func (m *RPCServer) FindUsers(args FindUsersArg, resp *FindUsersReply) error {
+	resp.User, resp.Err = m.Impl.FindUsers(args.query)
 	return nil
 }

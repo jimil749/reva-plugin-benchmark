@@ -63,4 +63,19 @@ func BenchmarkHashicorpPluginRPC(b *testing.B) {
 			_, _ = manager.GetUser(&userpb.UserId{OpaqueId: "4c510ada-c86b-4815-8820-42cdf82c3d51", Idp: "cernbox.cern.ch"})
 		}
 	})
+	b.Run("GetUserByClaim", func(b *testing.B) {
+		for i := 0; i < b.N; i++ {
+			_, _ = manager.GetUserByClaim("mail", "einstein@cern.ch")
+		}
+	})
+	b.Run("GetUserGroups", func(b *testing.B) {
+		for i := 0; i < b.N; i++ {
+			_, _ = manager.GetUserGroups(&userpb.UserId{OpaqueId: "4c510ada-c86b-4815-8820-42cdf82c3d51", Idp: "cernbox.cern.ch"})
+		}
+	})
+	b.Run("FindUser", func(b *testing.B) {
+		for i := 0; i < b.N; i++ {
+			_, _ = manager.FindUsers("einstein")
+		}
+	})
 }
