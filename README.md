@@ -9,6 +9,24 @@ The following packages have been (ongoing) benchmarked:
 - [Traefik Yaegi](https://github.com/traefik/yaegi)
 - [Goloader](https://github.com/pkujhd/goloader)
 
+# Plugin
+
+The "core" program exposes the following interface (defined in `pkg/shared/interface.go`) for the plugin to implement:
+
+```go
+type Manager interface {
+	OnLoad(userFile string) error
+	GetUser(*userpb.UserId) (*userpb.User, error)
+	GetUserByClaim(claim, value string) (*userpb.User, error)
+	GetUserGroups(*userpb.UserId) ([]string, error)
+	FindUsers(query string) ([]*userpb.User, error)
+}
+```
+
+The responsibility of the plugin is to implement the above interface and make the implementation available to the main program. The framework used for communication b/w the host ("core") and the plugin is being benchmarked.
+
+
+ 
 # Benchmarks
 
 For the purpose of benchmarking, this project uses the existing [reva plugin driver](https://github.com/cs3org/reva/tree/master/pkg/user/manager/json). Details about each plugin package and the corresponding benchmarks can be found in the respective directories, which can be accessed from the directory structure below.
