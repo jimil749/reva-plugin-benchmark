@@ -11,7 +11,7 @@ The following packages have been (ongoing) benchmarked:
 
 # Plugin
 
-The "core" program exposes the following interface (defined in `pkg/shared/interface.go`) for the plugin to implement:
+The "core" program exposes the following interface (defined in `pkg/shared/interface.go`) for the plugin system which uses RPC/gRPC(hashicorp and pie plugin systems) to implement:
 
 ```go
 type Manager interface {
@@ -22,9 +22,19 @@ type Manager interface {
 	FindUsers(query string) ([]*userpb.User, error)
 }
 ```
+This interface has an extra `OnLoad` method which is responsible for initializing the interface implementation, so that it can be used for further calls.
 
 The responsibility of the plugin is to implement the above interface and make the implementation available to the main program. The framework used for communication b/w the host ("core") and the plugin is being benchmarked.
 
+For plugin system, not using rpc, following interface will suffice: 
+```go
+type Manager interface {
+	GetUser(*userpb.UserId) (*userpb.User, error)
+	GetUserByClaim(claim, value string) (*userpb.User, error)
+	GetUserGroups(*userpb.UserId) ([]string, error)
+	FindUsers(query string) ([]*userpb.User, error)
+}
+```
 
  
 # Benchmarks
