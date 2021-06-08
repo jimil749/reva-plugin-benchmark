@@ -55,6 +55,7 @@ For the purpose of benchmarking, this project uses the existing [reva plugin dri
    - __pkg__
      - __plugins__
        - __go\-native__
+         - [README.md](pkg/plugins/go-native/README.md)
          - [main.go](pkg/plugins/go-native/main.go)
        - __hashicorp__
          - __netrpc__
