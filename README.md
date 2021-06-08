@@ -67,3 +67,18 @@ cd reva-plugin-benchmark
 ```
 
 That's it!
+
+OR, if you want, you can(after cloning this repo):
+
+1. Build the hashicorp plugin file
+```
+$ go build -o hashicorp-plugin ./pkg/plugins/hashicorp/netrpc
+```
+2. Build the native go plugin file
+```
+go build -o buildmode=plugin -o go-plugin.so ./pkg/plugins/go-native/
+```
+3. Run the benchmarks
+```
+go test -bench=.
+```
