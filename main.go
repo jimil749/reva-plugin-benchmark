@@ -58,4 +58,5 @@ func main() {
 
 	user, _ = manager.GetUserByClaim("mail", "einstein@cern.ch")
 	fmt.Println(user.DisplayName)
+
 }

@@ -20,7 +20,8 @@ var PluginMap = map[string]plugin.Plugin{
 	"json": &JSONPlugin{},
 }
 
-// Manager is the interface that we're exposing as a plugin.
+// Manager is the interface that we're exposing as a plugin. This interface is only used for plugin
+// systems using RPC for communication.
 type Manager interface {
 	OnLoad(userFile string) error
 	GetUser(*userpb.UserId) (*userpb.User, error)
@@ -42,4 +43,12 @@ func (p *JSONPlugin) Server(*plugin.MuxBroker) (interface{}, error) {
 
 func (*JSONPlugin) Client(b *plugin.MuxBroker, c *rpc.Client) (interface{}, error) {
 	return &RPCClient{client: c}, nil
+}
+
+// UserManager is the interface we're exposing as a plugin for plugin systems NOT using RPC.
+type UserManager interface {
+	GetUser(*userpb.UserId) (*userpb.User, error)
+	GetUserByClaim(claim, value string) (*userpb.User, error)
+	GetUserGroups(*userpb.UserId) ([]string, error)
+	FindUsers(query string) ([]*userpb.User, error)
 }
