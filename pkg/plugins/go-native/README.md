@@ -24,7 +24,7 @@ This command will generate an shared obejct library from `test.go` by the name o
 # Cons
 
 1. Only supported on Linux
-2. Plugin once loaded cannot be "unloaded".
+2. Plugin once loaded cannot be "unloaded". There is no plan to implement this in the future.
 3. Version dependency: All the packages used by the plugin and the host should have the same version. (Making the host and the plugin tightly coupled.)
 
 # Benchmarks
