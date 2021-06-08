@@ -36,6 +36,7 @@ For the purpose of benchmarking, this project uses the existing [reva plugin dri
    - [README.md](README.md)
    - __file__
      - [user.demo.json](file/user.demo.json)
+   - [go\-plugin.so](go-plugin.so)
    - [go.mod](go.mod)
    - [go.sum](go.sum)
    - [hashicorp\-plugin](hashicorp-plugin)
@@ -43,6 +44,8 @@ For the purpose of benchmarking, this project uses the existing [reva plugin dri
    - [main\_test.go](main_test.go)
    - __pkg__
      - __plugins__
+       - __go\-native__
+         - [main.go](pkg/plugins/go-native/main.go)
        - __hashicorp__
          - __netrpc__
            - [README.md](pkg/plugins/hashicorp/netrpc/README.md)
