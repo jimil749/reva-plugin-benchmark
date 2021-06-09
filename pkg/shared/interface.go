@@ -42,7 +42,7 @@ func (p *JSONPlugin) Server(*plugin.MuxBroker) (interface{}, error) {
 }
 
 func (*JSONPlugin) Client(b *plugin.MuxBroker, c *rpc.Client) (interface{}, error) {
-	return &RPCClient{client: c}, nil
+	return &RPCClient{Client: c}, nil
 }
 
 // UserManager is the interface we're exposing as a plugin for plugin systems NOT using RPC.

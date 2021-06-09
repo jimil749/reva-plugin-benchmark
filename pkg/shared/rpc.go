@@ -7,7 +7,7 @@ import (
 )
 
 // RPCClient is an implementation of Manager that talks over RPC.
-type RPCClient struct{ client *rpc.Client }
+type RPCClient struct{ Client *rpc.Client }
 
 // OnLoadArg for RPC
 type OnLoadArg struct {
@@ -22,7 +22,7 @@ type OnLoadReply struct {
 func (m *RPCClient) OnLoad(userFile string) error {
 	args := OnLoadArg{UserFile: userFile}
 	resp := OnLoadReply{}
-	err := m.client.Call("Plugin.OnLoad", args, &resp)
+	err := m.Client.Call("Plugin.OnLoad", args, &resp)
 	if err != nil {
 		return err
 	}
@@ -41,7 +41,7 @@ type GetUserReply struct {
 func (m *RPCClient) GetUser(uid *userpb.UserId) (*userpb.User, error) {
 	args := GetUserArg{Uid: uid}
 	resp := GetUserReply{}
-	err := m.client.Call("Plugin.GetUser", args, &resp)
+	err := m.Client.Call("Plugin.GetUser", args, &resp)
 	if err != nil {
 		return nil, err
 	}
@@ -61,7 +61,7 @@ type GetUserByClaimReply struct {
 func (m *RPCClient) GetUserByClaim(claim, value string) (*userpb.User, error) {
 	args := GetUserByClaimArg{Claim: claim, Value: value}
 	resp := GetUserByClaimReply{}
-	err := m.client.Call("Plugin.GetUserByClaim", args, &resp)
+	err := m.Client.Call("Plugin.GetUserByClaim", args, &resp)
 	if err != nil {
 		return nil, err
 	}
@@ -80,7 +80,7 @@ type GetUserGroupsReply struct {
 func (m *RPCClient) GetUserGroups(user *userpb.UserId) ([]string, error) {
 	args := GetUserGroupsArg{User: user}
 	resp := GetUserGroupsReply{}
-	err := m.client.Call("Plugin.GetUserGroups", args, &resp)
+	err := m.Client.Call("Plugin.GetUserGroups", args, &resp)
 	if err != nil {
 		return nil, err
 	}
@@ -88,7 +88,7 @@ func (m *RPCClient) GetUserGroups(user *userpb.UserId) ([]string, error) {
 }
 
 type FindUsersArg struct {
-	query string
+	Query string
 }
 
 type FindUsersReply struct {
@@ -97,9 +97,9 @@ type FindUsersReply struct {
 }
 
 func (m *RPCClient) FindUsers(query string) ([]*userpb.User, error) {
-	args := FindUsersArg{query: query}
+	args := FindUsersArg{Query: query}
 	resp := FindUsersReply{}
-	err := m.client.Call("Plugin.FindUsers", args, &resp)
+	err := m.Client.Call("Plugin.FindUsers", args, &resp)
 	if err != nil {
 		return nil, err
 	}
@@ -134,6 +134,6 @@ func (m *RPCServer) GetUserGroups(args GetUserGroupsArg, resp *GetUserGroupsRepl
 }
 
 func (m *RPCServer) FindUsers(args FindUsersArg, resp *FindUsersReply) error {
-	resp.User, resp.Err = m.Impl.FindUsers(args.query)
+	resp.User, resp.Err = m.Impl.FindUsers(args.Query)
 	return nil
 }

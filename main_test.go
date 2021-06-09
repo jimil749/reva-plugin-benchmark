@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"net/rpc/jsonrpc"
 	"os"
 	"os/exec"
 	"plugin"
@@ -13,6 +14,7 @@ import (
 	"github.com/hashicorp/go-hclog"
 	hashPlugin "github.com/hashicorp/go-plugin"
 	"github.com/jimil749/reva-plugin-benchmark/pkg/shared"
+	"github.com/natefinch/pie"
 )
 
 // BenchmarkGoPlugin benchmarks the native go-plugin
@@ -101,6 +103,48 @@ func BenchmarkHashicorpPluginRPC(b *testing.B) {
 	// We should have the manager now! This feels like a normal interface
 	// implementation but is in fact over an RPC connection.
 	manager := raw.(shared.Manager)
+
+	b.Run("OnLoad", func(b *testing.B) {
+		for i := 0; i < b.N; i++ {
+			_ = manager.OnLoad("./file/user.demo.json")
+		}
+	})
+	b.Run("GetUser", func(b *testing.B) {
+		for i := 0; i < b.N; i++ {
+			_, _ = manager.GetUser(&userpb.UserId{OpaqueId: "4c510ada-c86b-4815-8820-42cdf82c3d51", Idp: "cernbox.cern.ch"})
+		}
+	})
+	b.Run("GetUserByClaim", func(b *testing.B) {
+		for i := 0; i < b.N; i++ {
+			_, _ = manager.GetUserByClaim("mail", "einstein@cern.ch")
+		}
+	})
+	b.Run("GetUserGroups", func(b *testing.B) {
+		for i := 0; i < b.N; i++ {
+			_, _ = manager.GetUserGroups(&userpb.UserId{OpaqueId: "4c510ada-c86b-4815-8820-42cdf82c3d51", Idp: "cernbox.cern.ch"})
+		}
+	})
+	b.Run("FindUser", func(b *testing.B) {
+		for i := 0; i < b.N; i++ {
+			_, _ = manager.FindUsers("einstein")
+		}
+	})
+}
+
+// BenchmarkPiePlugin benchmarks pie plugin
+func BenchmarkPiePlugin(b *testing.B) {
+	// plugin provider path (bin exe)
+	path := "./pieplugin"
+
+	// we are client and communicate with the plugin using JSON-RPC.
+	client, err := pie.StartProviderCodec(jsonrpc.NewClientCodec, os.Stderr, path)
+	if err != nil {
+		fmt.Println("Error running plugin")
+		panic(err)
+	}
+	defer client.Close()
+
+	manager := shared.RPCClient{client}
 
 	b.Run("OnLoad", func(b *testing.B) {
 		for i := 0; i < b.N; i++ {
