@@ -52,6 +52,7 @@ For the purpose of benchmarking, this project uses the existing [reva plugin dri
    - [hashicorp\-plugin](hashicorp-plugin)
    - [main.go](main.go)
    - [main\_test.go](main_test.go)
+   - [pieplugin](pieplugin)
    - __pkg__
      - __plugins__
        - __go\-native__
@@ -61,6 +62,9 @@ For the purpose of benchmarking, this project uses the existing [reva plugin dri
          - __netrpc__
            - [README.md](pkg/plugins/hashicorp/netrpc/README.md)
            - [main.go](pkg/plugins/hashicorp/netrpc/main.go)
+       - __pie__
+         - [README.md](pkg/plugins/pie/README.md)
+         - [main.go](pkg/plugins/pie/main.go)
      - __shared__
        - [interface.go](pkg/shared/interface.go)
        - [rpc.go](pkg/shared/rpc.go)
