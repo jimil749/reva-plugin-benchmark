@@ -2,82 +2,61 @@ package main
 
 import (
 	"fmt"
-	"net/rpc/jsonrpc"
+	"io/ioutil"
+	"log"
 	"os"
+	"os/exec"
 
 	userpb "github.com/cs3org/go-cs3apis/cs3/identity/user/v1beta1"
+	"github.com/hashicorp/go-plugin"
 	"github.com/jimil749/reva-plugin-benchmark/pkg/shared"
-	"github.com/natefinch/pie"
 )
 
-// this is just for the purpose of testing (TODO: cleanup this mess!)
+// this is just for the purpose of testing
 func main() {
-	// // We don't want to see the plugin logs.
-	// log.SetOutput(ioutil.Discard)
+	// We don't want to see the plugin logs.
+	log.SetOutput(ioutil.Discard)
 
-	// // We're a host. Start by launching the plugin process.
-	// client := plugin.NewClient(&plugin.ClientConfig{
-	// 	HandshakeConfig: shared.Handshake,
-	// 	Plugins:         shared.PluginMap,
-	// 	Cmd:             exec.Command("./hashicorp-plugin"),
-	// 	AllowedProtocols: []plugin.Protocol{
-	// 		plugin.ProtocolNetRPC, plugin.ProtocolGRPC},
-	// })
-	// defer client.Kill()
+	// We're a host. Start by launching the plugin process.
+	client := plugin.NewClient(&plugin.ClientConfig{
+		HandshakeConfig: shared.Handshake,
+		Plugins:         shared.PluginMap,
+		Cmd:             exec.Command("./hashicorp-plugin"),
+		AllowedProtocols: []plugin.Protocol{
+			plugin.ProtocolNetRPC, plugin.ProtocolGRPC},
+	})
+	defer client.Kill()
 
-	// // Connect via RPC
-	// rpcClient, err := client.Client()
-	// if err != nil {
-	// 	fmt.Println("Error:", err.Error())
-	// 	os.Exit(1)
-	// }
-
-	// // Request the plugin
-	// raw, err := rpcClient.Dispense("json")
-	// if err != nil {
-	// 	fmt.Println("Error:", err.Error())
-	// 	os.Exit(1)
-	// }
-
-	// // We should have the Manager now! This feels like a normal interface
-	// // implementation but is in fact over an RPC connection.
-	// manager := raw.(shared.Manager)
-
-	// err = manager.OnLoad("./file/user.demo.json")
-	// if err != nil {
-	// 	fmt.Println(err)
-	// }
-
-	// user, err := manager.GetUser(&userpb.UserId{OpaqueId: "4c510ada-c86b-4815-8820-42cdf82c3d51", Idp: "cernbox.cern.ch"})
-	// if err != nil {
-	// 	fmt.Println(err)
-	// }
-	// fmt.Println(user.DisplayName)
-
-	// user, _ = manager.GetUserByClaim("mail", "einstein@cern.ch")
-	// fmt.Println(user.DisplayName)
-
-	// plugin provider path (bin exe)
-	path := "./pieplugin"
-
-	// we are client and communicate with the plugin using JSON-RPC.
-	client, err := pie.StartProviderCodec(jsonrpc.NewClientCodec, os.Stderr, path)
+	// Connect via RPC
+	rpcClient, err := client.Client()
 	if err != nil {
-		fmt.Println("Error running plugin")
-		panic(err)
+		fmt.Println("Error:", err.Error())
+		os.Exit(1)
 	}
-	defer client.Close()
 
-	p := shared.RPCClient{client}
+	// Request the plugin
+	raw, err := rpcClient.Dispense("json")
+	if err != nil {
+		fmt.Println("Error:", err.Error())
+		os.Exit(1)
+	}
 
-	err = p.OnLoad("./file/user.demo.json")
+	// We should have the Manager now! This feels like a normal interface
+	// implementation but is in fact over an RPC connection.
+	manager := raw.(shared.Manager)
+
+	err = manager.OnLoad("./file/user.demo.json")
 	if err != nil {
 		fmt.Println(err)
 	}
 
-	user, err := p.GetUser(&userpb.UserId{OpaqueId: "4c510ada-c86b-4815-8820-42cdf82c3d51", Idp: "cernbox.cern.ch"})
+	user, err := manager.GetUser(&userpb.UserId{OpaqueId: "4c510ada-c86b-4815-8820-42cdf82c3d51", Idp: "cernbox.cern.ch"})
 	if err != nil {
 		fmt.Println(err)
 	}
 	fmt.Println(user.DisplayName)
+
+	user, _ = manager.GetUserByClaim("mail", "einstein@cern.ch")
+	fmt.Println(user.DisplayName)
+
 }
