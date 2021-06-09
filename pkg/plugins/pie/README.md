@@ -1,5 +1,26 @@
 # Pie Plugin
 
+Package pie provides a toolkit for creating plugins for Go applications. Pie plugins communicate with the original process via RPC over the plugin application's Stdin and Stdout.
+
+# Usage
+
+Pie plugin package provides 2 kinds of functions:
+1. `NewProvider`: Executed by the plugin to set-up it's end of the communications. `NewProvider` starts an JSON RPC Server, which is responsible for serving plugin "methods" over RPC
+2. `StartProvider`: Executed by the main application to set up it's end of the communications and start a plugin executable. The main application is the RPC client, consuming the methods served by the plugin. (which is the RPC Client).
+
+Method Definition [here](https://github.com/natefinch/pie#func-startprovider)
+
+# Pros
+
+1. Uses RPC for communication, hence the plugin code can easily be "unloaded" by killing the client. (Hot Reloading can easily be applied here.)
+2. Simple API driven plugins, which are intuitive and easy to write.
+3. Flexible, in the sense that the plugin shouldn't necesserily be in Go, can be in any language as long as the plugin can provide an RPC API.
+
+# Cons
+
+1. Performance Overhead. 
+2. No longer maintained.
+3. Lack of Documentation.
 
 # Benchmarks
 
@@ -15,6 +36,7 @@ This section contains the benchmark of each of the methods of the `Manager` inte
 
 
 ```
+$ ./run.sh
 goos: linux
 goarch: amd64
 pkg: github.com/jimil749/reva-plugin-benchmark
