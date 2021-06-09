@@ -97,13 +97,17 @@ func (m *Manager) FindUsers(args shared.FindUsersArg, reply *shared.FindUsersRep
 	return nil
 }
 
-// func (m Manager) GetUserGroups(args shared.GetUserGroupsArg, reply *shared.GetUserGroupsReply) (error) {
-// 	user, err := m.GetUser(args.User)
-// 	if err != nil {
-// 		return nil, err
-// 	}
-// 	return user.Groups, nil
-// }
+func (m Manager) GetUserGroups(args shared.GetUserGroupsArg, reply *shared.GetUserGroupsReply) error {
+	// user, err := m.GetUser(args.User)
+	var user *userpb.User
+	for _, u := range m.users {
+		if (u.Id.GetOpaqueId() == args.User.OpaqueId || u.Username == args.User.OpaqueId) && (args.User.Idp == "" || args.User.Idp == u.Id.GetIdp()) {
+			user = u
+		}
+	}
+	reply.Group = user.Groups
+	return nil
+}
 
 func main() {
 	// We are plugin provider!
