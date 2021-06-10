@@ -81,7 +81,7 @@ func BenchmarkHashicorpPlugingRPC(b *testing.B) {
 		Plugins:         shared.PluginMap,
 		Cmd:             exec.Command("./hashicorp-plugin-grpc"),
 		AllowedProtocols: []hashPlugin.Protocol{
-			hashPlugin.ProtocolNetRPC},
+			hashPlugin.ProtocolNetRPC, hashPlugin.ProtocolGRPC},
 		Logger: logger,
 	})
 	defer client.Kill()
