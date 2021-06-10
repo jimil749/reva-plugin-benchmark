@@ -101,6 +101,7 @@ OR, if you want, you can(after cloning this repo):
 1. Build the plugin files
 ```
 $ go build -o hashicorp-plugin ./pkg/plugins/hashicorp/netrpc
+$ go build -o hashicorp-plugin-grpc ./pkg/plugins/hashicorp/grpc
 $ go build -o buildmode=plugin -o go-plugin.so ./pkg/plugins/go-native/
 $ go build -o pieplugin ./pkg/plugins/pie/
 ```
