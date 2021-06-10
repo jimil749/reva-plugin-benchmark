@@ -50,6 +50,7 @@ For the purpose of benchmarking, this project uses the existing [reva plugin dri
    - [go.mod](go.mod)
    - [go.sum](go.sum)
    - [hashicorp\-plugin](hashicorp-plugin)
+   - [hashicorp\-plugin\-grpc](hashicorp-plugin-grpc)
    - [main.go](main.go)
    - [main\_test.go](main_test.go)
    - [pieplugin](pieplugin)
@@ -58,14 +59,23 @@ For the purpose of benchmarking, this project uses the existing [reva plugin dri
        - __go\-native__
          - [README.md](pkg/plugins/go-native/README.md)
          - [main.go](pkg/plugins/go-native/main.go)
+       - __goloader__
        - __hashicorp__
+         - __grpc__
+           - [README.md](pkg/plugins/hashicorp/grpc/README.md)
+           - [main.go](pkg/plugins/hashicorp/grpc/main.go)
          - __netrpc__
            - [README.md](pkg/plugins/hashicorp/netrpc/README.md)
            - [main.go](pkg/plugins/hashicorp/netrpc/main.go)
        - __pie__
          - [README.md](pkg/plugins/pie/README.md)
          - [main.go](pkg/plugins/pie/main.go)
+     - __proto__
+       - [manager.pb.go](pkg/proto/manager.pb.go)
+       - [manager.proto](pkg/proto/manager.proto)
+       - [manager\_grpc.pb.go](pkg/proto/manager_grpc.pb.go)
      - __shared__
+       - [grpc.go](pkg/shared/grpc.go)
        - [interface.go](pkg/shared/interface.go)
        - [rpc.go](pkg/shared/rpc.go)
    - [run.sh](run.sh)
