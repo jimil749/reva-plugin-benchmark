@@ -21,7 +21,7 @@ func main() {
 	client := plugin.NewClient(&plugin.ClientConfig{
 		HandshakeConfig: shared.Handshake,
 		Plugins:         shared.PluginMap,
-		Cmd:             exec.Command("./hashicorp-plugin"),
+		Cmd:             exec.Command("./hashicorp-plugin-grpc"),
 		AllowedProtocols: []plugin.Protocol{
 			plugin.ProtocolNetRPC, plugin.ProtocolGRPC},
 	})
@@ -35,7 +35,7 @@ func main() {
 	}
 
 	// Request the plugin
-	raw, err := rpcClient.Dispense("json")
+	raw, err := rpcClient.Dispense("json_grpc")
 	if err != nil {
 		fmt.Println("Error:", err.Error())
 		os.Exit(1)
