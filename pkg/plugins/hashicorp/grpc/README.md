@@ -1,4 +1,18 @@
+# Hashicorp Go-plugin over gRPC
+
+
 # Benchmarks
+
+This section contains the benchmark of each of the methods of the `Manager` interface that are called using the hashicorp go-plugin framework.
+
+| Method Name                       | Operations  | ns/op       |
+| -------------------------- |:-----------:| -----------:|
+| OnLoad()                   | 5725        | 185584 ns/op  |
+| GetUser()                  | 10000       | 105572 ns/op |
+| GetUserByClaim()           | 12775       | 93748 ns/op |
+| GetUserGroups()            | 12098       | 99894 ns/op |
+| FindUser()                 | 12608      | 96465 ns/op |
+
 
 ```
 $ ./run.sh
