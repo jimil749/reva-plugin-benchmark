@@ -1,3 +1,4 @@
 hashicorp-plugin
 go-plugin.so
 pieplugin
+hashicorp-plugin-grpc

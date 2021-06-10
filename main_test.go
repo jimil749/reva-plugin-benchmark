@@ -65,6 +65,72 @@ func BenchmarkGoPlugin(b *testing.B) {
 
 }
 
+// BenchmarkHashicorpPlugingRPC benchmarks hashicorp gRPC plugin
+func BenchmarkHashicorpPlugingRPC(b *testing.B) {
+	log.SetOutput(ioutil.Discard)
+
+	logger := hclog.New(&hclog.LoggerOptions{
+		Name:   "plugin",
+		Output: os.Stdout,
+		Level:  hclog.NoLevel,
+	})
+
+	// We're a host. Start by launching the plugin process.
+	client := hashPlugin.NewClient(&hashPlugin.ClientConfig{
+		HandshakeConfig: shared.Handshake,
+		Plugins:         shared.PluginMap,
+		Cmd:             exec.Command("./hashicorp-plugin-grpc"),
+		AllowedProtocols: []hashPlugin.Protocol{
+			hashPlugin.ProtocolNetRPC},
+		Logger: logger,
+	})
+	defer client.Kill()
+
+	// Connect via RPC
+	rpcClient, err := client.Client()
+	if err != nil {
+		fmt.Println("Error:", err.Error())
+		os.Exit(1)
+	}
+
+	// Request the plugin
+	raw, err := rpcClient.Dispense("json_grpc")
+	if err != nil {
+		fmt.Println("Error:", err.Error())
+		os.Exit(1)
+	}
+
+	// We should have the manager now! This feels like a normal interface
+	// implementation but is in fact over an RPC connection.
+	manager := raw.(shared.Manager)
+
+	b.Run("OnLoad", func(b *testing.B) {
+		for i := 0; i < b.N; i++ {
+			_ = manager.OnLoad("./file/user.demo.json")
+		}
+	})
+	b.Run("GetUser", func(b *testing.B) {
+		for i := 0; i < b.N; i++ {
+			_, _ = manager.GetUser(&userpb.UserId{OpaqueId: "4c510ada-c86b-4815-8820-42cdf82c3d51", Idp: "cernbox.cern.ch"})
+		}
+	})
+	b.Run("GetUserByClaim", func(b *testing.B) {
+		for i := 0; i < b.N; i++ {
+			_, _ = manager.GetUserByClaim("mail", "einstein@cern.ch")
+		}
+	})
+	b.Run("GetUserGroups", func(b *testing.B) {
+		for i := 0; i < b.N; i++ {
+			_, _ = manager.GetUserGroups(&userpb.UserId{OpaqueId: "4c510ada-c86b-4815-8820-42cdf82c3d51", Idp: "cernbox.cern.ch"})
+		}
+	})
+	b.Run("FindUser", func(b *testing.B) {
+		for i := 0; i < b.N; i++ {
+			_, _ = manager.FindUsers("einstein")
+		}
+	})
+}
+
 // BenchmarkHashicorpPluginRPC benchmarks hashicorp rpc plugin.
 func BenchmarkHashicorpPluginRPC(b *testing.B) {
 	log.SetOutput(ioutil.Discard)
