@@ -20,8 +20,9 @@ import (
 // BenchmarkGoPlugin benchmarks the native go-plugin
 func BenchmarkGoPlugin(b *testing.B) {
 	// Open the plugin shared object library
-	sym, err := plugin.Open("./go-plugin.so")
+	sym, err := plugin.Open("go-plugin.so")
 	if err != nil {
+		fmt.Println(err)
 		panic(err)
 	}
 

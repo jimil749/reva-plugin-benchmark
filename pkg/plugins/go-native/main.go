@@ -12,7 +12,7 @@ import (
 	"github.com/cs3org/reva/pkg/errtypes"
 )
 
-type manager struct {
+type Manager struct {
 	users []*userpb.User
 }
 
@@ -31,12 +31,12 @@ func New(userFile string) (shared.UserManager, error) {
 		return nil, err
 	}
 
-	return &manager{
+	return &Manager{
 		users: users,
 	}, nil
 }
 
-func (m *manager) GetUser(uid *userpb.UserId) (*userpb.User, error) {
+func (m *Manager) GetUser(uid *userpb.UserId) (*userpb.User, error) {
 	for _, u := range m.users {
 		if (u.Id.GetOpaqueId() == uid.OpaqueId || u.Username == uid.OpaqueId) && (uid.Idp == "" || uid.Idp == u.Id.GetIdp()) {
 			return u, nil
@@ -45,7 +45,7 @@ func (m *manager) GetUser(uid *userpb.UserId) (*userpb.User, error) {
 	return nil, errtypes.NotFound(uid.OpaqueId)
 }
 
-func (m *manager) GetUserByClaim(claim, value string) (*userpb.User, error) {
+func (m *Manager) GetUserByClaim(claim, value string) (*userpb.User, error) {
 	for _, u := range m.users {
 		if userClaim, err := extractClaim(u, claim); err == nil && value == userClaim {
 			return u, nil
@@ -79,7 +79,7 @@ func userContains(u *userpb.User, query string) bool {
 		strings.Contains(strings.ToLower(u.Mail), query) || strings.Contains(strings.ToLower(u.Id.OpaqueId), query)
 }
 
-func (m *manager) FindUsers(query string) ([]*userpb.User, error) {
+func (m *Manager) FindUsers(query string) ([]*userpb.User, error) {
 	users := []*userpb.User{}
 	for _, u := range m.users {
 		if userContains(u, query) {
@@ -89,10 +89,12 @@ func (m *manager) FindUsers(query string) ([]*userpb.User, error) {
 	return users, nil
 }
 
-func (m *manager) GetUserGroups(uid *userpb.UserId) ([]string, error) {
+func (m *Manager) GetUserGroups(uid *userpb.UserId) ([]string, error) {
 	user, err := m.GetUser(uid)
 	if err != nil {
 		return nil, err
 	}
 	return user.Groups, nil
 }
+
+func main() {}
