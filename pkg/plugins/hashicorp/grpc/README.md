@@ -1,5 +1,8 @@
 # Hashicorp Go-plugin over gRPC
 
+For the sake of *benchmarking*, I've used the CS3 User API proto file here, defined in [manager.proto](pkg/proto/manager.proto).
+In order to satisfy the gRPC communication with the defined interface, I have marshalled/unmarshalled the user object to/from
+`userpb.User`(business object User/interface defined User) and `proto.User` (gRPC layer User)
 
 # Benchmarks
 
