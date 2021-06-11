@@ -58,14 +58,6 @@ type UserManager interface {
 	FindUsers(query string) ([]*userpb.User, error)
 }
 
-type ManagerGRPC interface {
-	OnLoad(userFile string) error
-	GetUser(*userpb.UserId) (*userpb.User, error)
-	GetUserByClaim(claim, value string) (*userpb.User, error)
-	GetUserGroups(*userpb.UserId) ([]string, error)
-	FindUsers(query string) ([]*userpb.User, error)
-}
-
 type JSONPluginGRPC struct {
 	plugin.Plugin
 	Impl Manager
