@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"go/build"
 	"io/ioutil"
 	"log"
 	"net/rpc/jsonrpc"
@@ -23,8 +24,12 @@ import (
 )
 
 func BenchmarkYaegi(b *testing.B) {
+	gopath := os.Getenv("GOPATH")
+	if gopath == "" {
+		gopath = build.Default.GOPATH
+	}
 	i := interp.New(interp.Options{
-		GoPath: "/home/jimil/go",
+		GoPath: gopath,
 	})
 
 	i.Use(stdlib.Symbols)
