@@ -9,74 +9,71 @@ import (
 	"os/exec"
 	"plugin"
 	"testing"
-	"unsafe"
 
 	userpb "github.com/cs3org/go-cs3apis/cs3/identity/user/v1beta1"
 	"github.com/hashicorp/go-hclog"
 	hashPlugin "github.com/hashicorp/go-plugin"
-	"github.com/jimil749/reva-plugin-benchmark/pkg/plugins/goloader/manager"
 	"github.com/jimil749/reva-plugin-benchmark/pkg/shared"
 	"github.com/natefinch/pie"
-	"github.com/pkujhd/goloader"
 )
 
-func BenchmarkGoLoader(b *testing.B) {
-	files := []string{
-		"/home/jimil/go/pkg/linux_amd64/github.com/jimil749/reva-plugin-benchmark/pkg/plugins/goloader/manager.a",
-		"json.o",
-	}
-	pkgPath := []string{
-		"/home/jimil/Desktop/reva-plugin-benchmark/pkg/plugins/manager",
-		"",
-	}
+// func BenchmarkGoLoader(b *testing.B) {
+// 	files := []string{
+// 		"/home/jimil/go/pkg/linux_amd64/github.com/jimil749/reva-plugin-benchmark/pkg/plugins/goloader/manager.a",
+// 		"json.o",
+// 	}
+// 	pkgPath := []string{
+// 		"/home/jimil/Desktop/reva-plugin-benchmark/pkg/plugins/manager",
+// 		"",
+// 	}
 
-	symPtr := make(map[string]uintptr)
-	err := goloader.RegSymbol(symPtr)
-	if err != nil {
-		fmt.Println("fails in regsymbol")
-		panic(err)
-	}
+// 	symPtr := make(map[string]uintptr)
+// 	err := goloader.RegSymbol(symPtr)
+// 	if err != nil {
+// 		fmt.Println("fails in regsymbol")
+// 		panic(err)
+// 	}
 
-	linker, err := goloader.ReadObjs(files, pkgPath)
-	if err != nil {
-		fmt.Println("fails in readobjs")
-		panic(err)
-	}
+// 	linker, err := goloader.ReadObjs(files, pkgPath)
+// 	if err != nil {
+// 		fmt.Println("fails in readobjs")
+// 		panic(err)
+// 	}
 
-	var mmapByte []byte
-	codeModule, err := goloader.Load(linker, symPtr)
-	if err != nil {
-		fmt.Println("fails in loading")
-		panic(err)
-	}
+// 	var mmapByte []byte
+// 	codeModule, err := goloader.Load(linker, symPtr)
+// 	if err != nil {
+// 		fmt.Println("fails in loading")
+// 		panic(err)
+// 	}
 
-	runFuncPtr := codeModule.Syms["json.New"]
-	if runFuncPtr == 0 {
-		panic("Load error! Function not found: json.New")
-	}
-	funcPtrContainer := (uintptr)(unsafe.Pointer(&runFuncPtr))
-	runFunc := *(*func(string) (manager.UserManager, error))(unsafe.Pointer(&funcPtrContainer))
+// 	runFuncPtr := codeModule.Syms["json.New"]
+// 	if runFuncPtr == 0 {
+// 		panic("Load error! Function not found: json.New")
+// 	}
+// 	funcPtrContainer := (uintptr)(unsafe.Pointer(&runFuncPtr))
+// 	runFunc := *(*func(string) (manager.UserManager, error))(unsafe.Pointer(&funcPtrContainer))
 
-	manager, err := runFunc("./file/user.demo.json")
-	if err != nil {
-		panic(err)
-	}
+// 	manager, err := runFunc("./file/user.demo.json")
+// 	if err != nil {
+// 		panic(err)
+// 	}
 
-	fmt.Printf("%+v", manager)
-	codeModule.Unload()
+// 	fmt.Printf("%+v", manager)
+// 	codeModule.Unload()
 
-	if mmapByte == nil {
-		mmapByte, err = goloader.Mmap(1024)
-		if err != nil {
-			panic(err)
-		}
-		b := make([]byte, 1024)
-		copy(mmapByte, b)
-	} else {
-		goloader.Munmap(mmapByte)
-		mmapByte = nil
-	}
-}
+// 	if mmapByte == nil {
+// 		mmapByte, err = goloader.Mmap(1024)
+// 		if err != nil {
+// 			panic(err)
+// 		}
+// 		b := make([]byte, 1024)
+// 		copy(mmapByte, b)
+// 	} else {
+// 		goloader.Munmap(mmapByte)
+// 		mmapByte = nil
+// 	}
+// }
 
 // BenchmarkGoPlugin benchmarks the native go-plugin
 func BenchmarkGoPlugin(b *testing.B) {
