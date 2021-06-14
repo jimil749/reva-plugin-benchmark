@@ -27,7 +27,7 @@ func (W _github_com_jimil749_reva_plugin_benchmark_pkg_manager_UserManager) GetU
 	return W.WGetUserGroups(a0)
 }
 
-func managerSymbols() map[string]map[string]reflect.Value {
+func ManagerSymbols() map[string]map[string]reflect.Value {
 	return map[string]map[string]reflect.Value{
 		"github.com/jimil749/reva-plugin-benchmark/pkg/manager/manager": {
 			// type definitions

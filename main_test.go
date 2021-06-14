@@ -8,14 +8,94 @@ import (
 	"os"
 	"os/exec"
 	"plugin"
+	"reflect"
 	"testing"
 
 	userpb "github.com/cs3org/go-cs3apis/cs3/identity/user/v1beta1"
 	"github.com/hashicorp/go-hclog"
 	hashPlugin "github.com/hashicorp/go-plugin"
+	"github.com/jimil749/reva-plugin-benchmark/pkg/manager"
+	"github.com/jimil749/reva-plugin-benchmark/pkg/plugins/yaegi"
 	"github.com/jimil749/reva-plugin-benchmark/pkg/shared"
 	"github.com/natefinch/pie"
+	"github.com/traefik/yaegi/interp"
+	"github.com/traefik/yaegi/stdlib"
 )
+
+func BenchmarkYaegi(b *testing.B) {
+	i := interp.New(interp.Options{
+		GoPath: "/home/jimil/go",
+	})
+
+	i.Use(stdlib.Symbols)
+	i.Use(yaegi.ManagerSymbols())
+
+	fmt.Println(i.Symbols("github.com/jimil749/reva-plugin-benchmark/pkg/manager/manager"))
+
+	_, err := i.Eval(`import "github.com/jimil749/reva-yaegi-benchmark"`)
+	if err != nil {
+		fmt.Println("failed to import plugin: ", err)
+		panic(err)
+	}
+
+	_, err = i.Eval(`package wrapper
+import (
+	json "github.com/jimil749/reva-yaegi-benchmark"
+	"github.com/jimil749/reva-plugin-benchmark/pkg/manager"
+)
+
+func NewWrapper(userFile string) (manager.UserManager, error) {
+	mgr, err := json.New(userFile)
+	var m manager.UserManager = mgr
+	return m, err
+}
+`)
+
+	if err != nil {
+		fmt.Println("error: ", err)
+		panic(err)
+	}
+
+	fnNew, err := i.Eval("wrapper.NewWrapper")
+	if err != nil {
+		panic(err)
+	}
+
+	userFile := "./file/user.demo.json"
+	args := []reflect.Value{reflect.ValueOf(userFile)}
+	results := fnNew.Call(args)
+
+	if len(results) > 1 && results[1].Interface() != nil {
+		panic(results[1].Interface().(error))
+	}
+
+	mgr, ok := results[0].Interface().(manager.UserManager)
+	if !ok {
+		panic(fmt.Errorf("invalid interface type"))
+	}
+
+	b.Run("GetUser", func(b *testing.B) {
+		for i := 0; i < b.N; i++ {
+			_, _ = mgr.GetUser(&manager.UserId{OpaqueId: "4c510ada-c86b-4815-8820-42cdf82c3d51", Idp: "cernbox.cern.ch"})
+		}
+	})
+
+	b.Run("GetUserByClaim", func(b *testing.B) {
+		for i := 0; i < b.N; i++ {
+			_, _ = mgr.GetUserByClaim("mail", "einstein@cern.ch")
+		}
+	})
+	b.Run("GetUserGroups", func(b *testing.B) {
+		for i := 0; i < b.N; i++ {
+			_, _ = mgr.GetUserGroups(&manager.UserId{OpaqueId: "4c510ada-c86b-4815-8820-42cdf82c3d51", Idp: "cernbox.cern.ch"})
+		}
+	})
+	b.Run("FindUser", func(b *testing.B) {
+		for i := 0; i < b.N; i++ {
+			_, _ = mgr.FindUsers("einstein")
+		}
+	})
+}
 
 // func BenchmarkGoLoader(b *testing.B) {
 // 	files := []string{
