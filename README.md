@@ -7,7 +7,7 @@ The following packages have been (ongoing) benchmarked:
 - [Natefinch pie-plugin](https://github.com/natefinch/pie)
 - [Native golang Plugin](https://golang.org/pkg/plugin/)
 - [Traefik Yaegi](https://github.com/traefik/yaegi)
-- [Goloader](https://github.com/pkujhd/goloader)
+- [Goloader](https://github.com/pkujhd/goloader) (On hault, see: https://github.com/pkujhd/goloader/issues/32)
 
 # Plugin
 
@@ -36,7 +36,6 @@ type Manager interface {
 }
 ```
 
- 
 # Benchmarks
 
 For the purpose of benchmarking, this project uses the existing [reva plugin driver](https://github.com/cs3org/reva/tree/master/pkg/user/manager/json). Details about each plugin package and the corresponding benchmarks can be found in the respective directories, which can be accessed from the directory structure below.
@@ -51,15 +50,15 @@ For the purpose of benchmarking, this project uses the existing [reva plugin dri
    - [go.sum](go.sum)
    - [hashicorp\-plugin](hashicorp-plugin)
    - [hashicorp\-plugin\-grpc](hashicorp-plugin-grpc)
-   - [main.go](main.go)
    - [main\_test.go](main_test.go)
    - [pieplugin](pieplugin)
    - __pkg__
+     - __manager__
+       - [manager.go](pkg/manager/manager.go)
      - __plugins__
        - __go\-native__
          - [README.md](pkg/plugins/go-native/README.md)
          - [main.go](pkg/plugins/go-native/main.go)
-       - __goloader__
        - __hashicorp__
          - __grpc__
            - [README.md](pkg/plugins/hashicorp/grpc/README.md)
@@ -70,6 +69,8 @@ For the purpose of benchmarking, this project uses the existing [reva plugin dri
        - __pie__
          - [README.md](pkg/plugins/pie/README.md)
          - [main.go](pkg/plugins/pie/main.go)
+       - __yaegi__
+         - [symbol.go](pkg/plugins/yaegi/symbol.go)
      - __proto__
        - [manager.pb.go](pkg/proto/manager.pb.go)
        - [manager.proto](pkg/proto/manager.proto)
@@ -110,3 +111,10 @@ $ go build -o pieplugin ./pkg/plugins/pie/
 ```
 go test -bench=.
 ```
+
+# Backlog (TODO)
+
+1. Yaegi with Protobufs (See: https://github.com/traefik/yaegi/issues/1133)
+2. Hashicorp/Pie: Passing configurations to plugins without the use of OnLoad method (check how it is done in reva grpc services)
+3. Pie: Figure a way to check whether the plugin methods implements the exposed interface
+4. Hashicorp: Modify plugin methods like pie plugin. (rpc methods args and resp)
