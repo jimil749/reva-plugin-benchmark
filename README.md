@@ -71,7 +71,7 @@ For the purpose of benchmarking, this project uses the existing [reva plugin dri
          - [main.go](pkg/plugins/pie/main.go)
        - __yaegi__
          - [symbol.go](pkg/plugins/yaegi/symbol.go)
-         - [README.md](pkg/plugin/yaegi/README.md)
+         - [README.md](pkg/plugins/yaegi/README.md)
      - __proto__
        - [manager.pb.go](pkg/proto/manager.pb.go)
        - [manager.proto](pkg/proto/manager.proto)
