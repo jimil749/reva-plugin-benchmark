@@ -71,6 +71,7 @@ For the purpose of benchmarking, this project uses the existing [reva plugin dri
          - [main.go](pkg/plugins/pie/main.go)
        - __yaegi__
          - [symbol.go](pkg/plugins/yaegi/symbol.go)
+         - [README.md](pkg/plugin/yaegi/README.md)
      - __proto__
        - [manager.pb.go](pkg/proto/manager.pb.go)
        - [manager.proto](pkg/proto/manager.proto)
@@ -115,6 +116,6 @@ go test -bench=.
 # Backlog (TODO)
 
 1. Yaegi with Protobufs (See: https://github.com/traefik/yaegi/issues/1133)
-2. Hashicorp/Pie: Passing configurations to plugins without the use of OnLoad method (check how it is done in reva grpc services)
+2. Hashicorp/Pie: Passing configurations to plugins without the use of OnLoad method [Is there a way around this??!!]
 3. Pie: Figure a way to check whether the plugin methods implements the exposed interface
 4. Hashicorp: Modify plugin methods like pie plugin. (rpc methods args and resp)

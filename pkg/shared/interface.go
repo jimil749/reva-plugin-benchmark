@@ -27,6 +27,7 @@ var PluginMap = map[string]plugin.Plugin{
 // Manager is the interface that we're exposing as a plugin. This interface is only used for plugin
 // systems using RPC for communication.
 type Manager interface {
+	// instead of this, use some interface/method that returns an initialized rpc server
 	OnLoad(userFile string) error
 	GetUser(*userpb.UserId) (*userpb.User, error)
 	GetUserByClaim(claim, value string) (*userpb.User, error)
