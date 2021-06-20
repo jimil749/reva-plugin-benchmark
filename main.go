@@ -1,75 +1,59 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
+	"io/ioutil"
+	"log"
 	"os"
-	"unsafe"
+	"os/exec"
 
-	"github.com/jimil749/reva-plugin-benchmark/pkg/manager"
-	"github.com/pkujhd/goloader"
+	userpb "github.com/cs3org/go-cs3apis/cs3/identity/user/v1beta1"
+	"github.com/hashicorp/go-hclog"
+	hashPlugin "github.com/hashicorp/go-plugin"
+	"github.com/jimil749/reva-plugin-benchmark/pkg/shared"
 )
 
 // this is just for the purpose of testing
 func main() {
+	log.SetOutput(ioutil.Discard)
 
-	files := []string{
-		"/home/jimil/go/pkg/linux_amd64/github.com/jimil749/reva-plugin-benchmark/pkg/plugins/goloader/manager.a",
-		"json.o",
-	}
-	pkgPath := []string{
-		"github.com/jimil749/reva-plugin-benchmark/pkg/plugins/goloader/manager",
-		"",
-	}
+	logger := hclog.New(&hclog.LoggerOptions{
+		Name:   "plugin",
+		Output: os.Stdout,
+		Level:  hclog.NoLevel,
+	})
 
-	symPtr := make(map[string]uintptr)
-	err := goloader.RegSymbol(symPtr)
+	// We're a host. Start by launching the plugin process.
+	client := hashPlugin.NewClient(&hashPlugin.ClientConfig{
+		HandshakeConfig: shared.Handshake,
+		Plugins:         shared.PluginMap,
+		Cmd:             exec.Command("./hashicorp-plugin"),
+		AllowedProtocols: []hashPlugin.Protocol{
+			hashPlugin.ProtocolNetRPC},
+		Logger: logger,
+	})
+	defer client.Kill()
+
+	// Connect via RPC
+	rpcClient, err := client.Client()
 	if err != nil {
-		fmt.Println("fails in regsymbol")
-		panic(err)
+		fmt.Println("Error:", err.Error())
+		os.Exit(1)
 	}
 
-	goloader.RegTypes(symPtr, os.ReadFile)
-	goloader.RegTypes(symPtr, json.Unmarshal)
-
-	linker, err := goloader.ReadObjs(files, pkgPath)
+	// Request the plugin
+	raw, err := rpcClient.Dispense("json")
 	if err != nil {
-		fmt.Println("fails in readobjs")
-		panic(err)
+		fmt.Println("Error:", err.Error())
+		os.Exit(1)
 	}
 
-	var mmapByte []byte
-	codeModule, err := goloader.Load(linker, symPtr)
-	fmt.Println(err)
-	if err != nil {
-		fmt.Println("fails in loading")
-		panic(err)
-	}
+	// We should have the manager now! This feels like a normal interface
+	// implementation but is in fact over an RPC connection.
+	manager := raw.(shared.Manager)
 
-	runFuncPtr := codeModule.Syms["main.New"]
-	if runFuncPtr == 0 {
-		panic("Load error! Function not found: json.New")
-	}
-	funcPtrContainer := (uintptr)(unsafe.Pointer(&runFuncPtr))
-	runFunc := *(*func(string) (manager.UserManager, error))(unsafe.Pointer(&funcPtrContainer))
+	_ = manager.OnLoad("./file/user.demo.json")
 
-	manager, err := runFunc("./file/user.demo.json")
-	if err != nil {
-		panic(err)
-	}
-
-	fmt.Printf("%+v", manager)
-	codeModule.Unload()
-
-	if mmapByte == nil {
-		mmapByte, err = goloader.Mmap(1024)
-		if err != nil {
-			panic(err)
-		}
-		b := make([]byte, 1024)
-		copy(mmapByte, b)
-	} else {
-		goloader.Munmap(mmapByte)
-		mmapByte = nil
-	}
+	user, _ := manager.GetUser(&userpb.UserId{OpaqueId: "4c510ada-c86b-4815-8820-42cdf82c3d51", Idp: "cernbox.cern.ch"})
+	fmt.Printf("%+v\n", user)
 }
