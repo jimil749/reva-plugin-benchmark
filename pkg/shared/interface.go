@@ -39,7 +39,7 @@ type Manager interface {
 type JSONPlugin struct {
 	// Concrete implementation, written in Go. This is only used for plugins
 	// that are written in Go.
-	Impl Manager
+	Impl UserManager
 }
 
 func (p *JSONPlugin) Server(*plugin.MuxBroker) (interface{}, error) {

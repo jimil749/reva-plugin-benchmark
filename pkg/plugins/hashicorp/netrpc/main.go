@@ -17,23 +17,23 @@ type Manager struct {
 	users []*userpb.User
 }
 
-func (m *Manager) OnLoad(userFile string) error {
-	f, err := ioutil.ReadFile(userFile)
-	if err != nil {
-		return err
-	}
+// func (m *Manager) OnLoad(userFile string) error {
+// 	f, err := ioutil.ReadFile(userFile)
+// 	if err != nil {
+// 		return err
+// 	}
 
-	users := []*userpb.User{}
+// 	users := []*userpb.User{}
 
-	err = json.Unmarshal(f, &users)
-	if err != nil {
-		return err
-	}
+// 	err = json.Unmarshal(f, &users)
+// 	if err != nil {
+// 		return err
+// 	}
 
-	m.users = users
+// 	m.users = users
 
-	return nil
-}
+// 	return nil
+// }
 
 func (m *Manager) GetUser(uid *userpb.UserId) (*userpb.User, error) {
 	for _, u := range m.users {
@@ -96,11 +96,37 @@ func (m *Manager) GetUserGroups(uid *userpb.UserId) ([]string, error) {
 	return user.Groups, nil
 }
 
+func New(userFile string) (shared.UserManager, error) {
+
+	f, err := ioutil.ReadFile(userFile)
+	if err != nil {
+		return nil, err
+	}
+
+	users := []*userpb.User{}
+
+	err = json.Unmarshal(f, &users)
+	if err != nil {
+		return nil, err
+	}
+
+	return &Manager{
+		users: users,
+	}, nil
+}
+
+var UserFile string
+
 func main() {
+	mgr, err := New(UserFile)
+	if err != nil {
+		panic(err)
+	}
+
 	plugin.Serve(&plugin.ServeConfig{
 		HandshakeConfig: shared.Handshake,
 		Plugins: map[string]plugin.Plugin{
-			"json": &shared.JSONPlugin{Impl: &Manager{}},
+			"json": &shared.JSONPlugin{Impl: mgr},
 		},
 	})
 }

@@ -110,13 +110,13 @@ func (m *RPCClient) FindUsers(query string) ([]*userpb.User, error) {
 // the requirements of net/rpc
 type RPCServer struct {
 	// This is the real implementation
-	Impl Manager
+	Impl UserManager
 }
 
-func (m *RPCServer) OnLoad(args OnLoadArg, resp *OnLoadReply) error {
-	resp.Err = m.Impl.OnLoad(args.UserFile)
-	return nil
-}
+// func (m *RPCServer) OnLoad(args OnLoadArg, resp *OnLoadReply) error {
+// 	resp.Err = m.Impl.OnLoad(args.UserFile)
+// 	return nil
+// }
 
 func (m *RPCServer) GetUser(args GetUserArg, resp *GetUserReply) error {
 	resp.User, resp.Err = m.Impl.GetUser(args.Uid)

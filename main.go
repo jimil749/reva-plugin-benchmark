@@ -50,10 +50,8 @@ func main() {
 
 	// We should have the manager now! This feels like a normal interface
 	// implementation but is in fact over an RPC connection.
-	manager := raw.(shared.Manager)
-
-	_ = manager.OnLoad("./file/user.demo.json")
+	manager := raw.(shared.UserManager)
 
 	user, _ := manager.GetUser(&userpb.UserId{OpaqueId: "4c510ada-c86b-4815-8820-42cdf82c3d51", Idp: "cernbox.cern.ch"})
-	fmt.Printf("%+v\n", user)
+	fmt.Printf(user.DisplayName)
 }

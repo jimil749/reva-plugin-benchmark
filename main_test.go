@@ -254,13 +254,8 @@ func BenchmarkHashicorpPluginRPC(b *testing.B) {
 
 	// We should have the manager now! This feels like a normal interface
 	// implementation but is in fact over an RPC connection.
-	manager := raw.(shared.Manager)
+	manager := raw.(shared.UserManager)
 
-	b.Run("OnLoad", func(b *testing.B) {
-		for i := 0; i < b.N; i++ {
-			_ = manager.OnLoad("./file/user.demo.json")
-		}
-	})
 	b.Run("GetUser", func(b *testing.B) {
 		for i := 0; i < b.N; i++ {
 			_, _ = manager.GetUser(&userpb.UserId{OpaqueId: "4c510ada-c86b-4815-8820-42cdf82c3d51", Idp: "cernbox.cern.ch"})
