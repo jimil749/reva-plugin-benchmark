@@ -66,7 +66,7 @@ func NewWrapper(userFile string) (manager.UserManager, error) {
 		panic(err)
 	}
 
-	userFile := "./file/user.demo.json"
+	userFile := "./file/user-yaegi.demo.json"
 	args := []reflect.Value{reflect.ValueOf(userFile)}
 	results := fnNew.Call(args)
 
